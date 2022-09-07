@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:bmi_app/models/bmi.dart';
 import 'package:bmi_app/view/screen1/sliderInput_screen.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +45,7 @@ class _TextInputScreenState extends State<TextInputScreen> {
         builder: ((context, constraints) {
           double maxW = constraints.maxWidth * 0.75;
           double maxH = constraints.maxHeight * 0.5;
-          var softWrap;
+
           return Container(
             color: Colors.cyan,
             child: Center(
