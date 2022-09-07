@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_getters_setters
+
 class BodyMassIndex {
   double _weight;
   double _height;
