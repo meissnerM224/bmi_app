@@ -1,25 +1,41 @@
+import 'package:bmi_app/models/bmi.dart';
+import 'package:bmi_app/view/screen2/textInput_screen.dart';
 import 'package:flutter/material.dart';
 
 class SliderInputScreen extends StatefulWidget {
-  const SliderInputScreen({Key? key, required this.title}) : super(key: key);
+  const SliderInputScreen(
+    this.bmi, {
+    Key? key,
+  }) : super(key: key);
 
-  final String title;
+  final BodyMassIndex bmi;
 
   @override
   State<SliderInputScreen> createState() => _SliderInputScreenState();
 }
 
 class _SliderInputScreenState extends State<SliderInputScreen> {
-  double _groesse = 1.80;
-  double _gewicht = 80.0;
-
   @override
   Widget build(BuildContext context) {
-    final bmi = _gewicht / (_groesse * _groesse);
-    var bmiSlider = bmi;
+    final bmi = widget.bmi;
+
+    final bmiWithouNutll = bmi.bmi ?? BodyMassIndex.bmiMin;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text('BMI Calculator(slider)'),
+        leading: IconButton(
+          icon: const Icon(Icons.switch_right),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TextInputScreen(
+                  bmi,
+                ),
+              ),
+            );
+          },
+        ),
       ),
       body: LayoutBuilder(
         builder: ((context, constraints) {
@@ -35,14 +51,13 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       const Text(
                         'Größe in Meter:',
                         style: TextStyle(
-                          fontSize: 21.00,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 19.00,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       Expanded(
@@ -50,15 +65,15 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
                           activeColor: Colors.green,
                           inactiveColor: Colors.amber,
                           divisions: 220,
-                          label: '${_groesse.toStringAsFixed(2)} m',
+                          label: '${bmi.height.toStringAsFixed(2)} m',
                           onChanged: (value) {
                             setState(() {
-                              _groesse = value;
+                              bmi.height = value;
                             });
                           },
                           min: 01.10,
                           max: 02.20,
-                          value: _groesse,
+                          value: bmi.height,
                         ),
                       ),
                     ]),
@@ -68,8 +83,8 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
                         const Text(
                           'Gewicht in Kg:',
                           style: TextStyle(
-                            fontSize: 21.00,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 19.00,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         Expanded(
@@ -77,42 +92,47 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
                             activeColor: Colors.red,
                             inactiveColor: Colors.amber,
                             divisions: 180,
-                            label: ' ${_gewicht.round()} Kg',
+                            label: ' ${bmi.weight.round()} Kg',
                             onChanged: (value) {
-                              setState(() {
-                                _gewicht = value;
-                              });
+                              setState(
+                                () {
+                                  bmi.weight = value;
+                                },
+                              );
                             },
-                            min: 20.0,
+                            min: 21.0,
                             max: 180.0,
-                            value: _gewicht,
+                            value: bmi.weight,
                           ),
                         ),
                       ],
                     ),
-                    Icon((bmi > 28 || bmi < 19)
+                    Icon((bmiWithouNutll > 28 || bmiWithouNutll < 19)
                         ? Icons.build_circle_sharp
                         : Icons.check),
                     Text(
-                      'Der BMI ist: ${bmi.toStringAsFixed(0)}',
+                      'Der BMI ist: ${bmiWithouNutll.toStringAsFixed(0)}',
                       style: TextStyle(
-                        fontWeight: bmiSlider > 28 || bmiSlider < 19
+                        fontWeight: bmiWithouNutll > 28 || bmiWithouNutll < 19
                             ? FontWeight.w700
                             : FontWeight.w600,
-                        fontSize:
-                            bmiSlider > 28 || bmiSlider < 19 ? 21.00 : 21.00,
-                        color: bmi > 28 || bmi < 19 ? Colors.red : Colors.black,
+                        fontSize: bmiWithouNutll > 28 || bmiWithouNutll < 19
+                            ? 21.00
+                            : 21.00,
+                        color: bmiWithouNutll > 28 || bmiWithouNutll < 19
+                            ? Colors.red
+                            : Colors.black,
                       ),
                     ),
                     Expanded(
                       child: Slider(
-                        activeColor: bmiSlider > 28 || bmiSlider < 19
+                        activeColor: bmiWithouNutll > 28 || bmiWithouNutll < 19
                             ? Colors.red
                             : Colors.black,
-                        value: bmiSlider,
+                        value: bmiWithouNutll,
                         onChanged: (value) {},
-                        min: 4.00,
-                        max: 150.00,
+                        min: BodyMassIndex.bmiMin,
+                        max: BodyMassIndex.bmiMax,
                       ),
                     ),
                   ],
