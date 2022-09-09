@@ -84,10 +84,10 @@ class _TextInputScreenState extends ConsumerState<TextInputScreen> {
                             onChanged: (value) {
                               var heightDbl = double.tryParse(value);
                               if (heightDbl != null) {
-                                if (heightDbl > 2.20) {
+                                if (heightDbl >= 2.20) {
                                   heightDbl = 2.20;
                                 }
-                                if (heightDbl < 0.90) {
+                                if (heightDbl <= 0.90) {
                                   heightDbl = 0.9;
                                 }
                                 final provider = ref.read(refBmi.notifier);

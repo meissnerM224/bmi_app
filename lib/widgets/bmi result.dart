@@ -38,6 +38,10 @@ class BmiResult extends ConsumerWidget {
           ),
         ),
         Expanded(
+          child: Text('ein BMI zwischen 19 und 28 ist wünschenswert, da dieser'
+              ' ein Gesundes Gewicht / Körpergroesse verhältnis darstellt '),
+        ),
+        Expanded(
           child: Slider(
             activeColor: bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0
                 ? Color.fromARGB(255, 210, 23, 10)
