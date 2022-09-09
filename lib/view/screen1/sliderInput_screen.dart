@@ -1,27 +1,26 @@
 // ignore_for_file: file_names
 
+import 'package:bmi_app/main.dart';
 import 'package:bmi_app/models/bmi.dart';
 import 'package:bmi_app/view/screen2/textInput_screen.dart';
+import 'package:bmi_app/widgets/bmi%20result.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SliderInputScreen extends StatefulWidget {
-  const SliderInputScreen(
-    this.bmi, {
+class SliderInputScreen extends ConsumerStatefulWidget {
+  const SliderInputScreen({
     Key? key,
   }) : super(key: key);
 
-  final BodyMassIndex bmi;
-
   @override
-  State<SliderInputScreen> createState() => _SliderInputScreenState();
+  ConsumerState<SliderInputScreen> createState() => _SliderInputScreenState();
 }
 
-class _SliderInputScreenState extends State<SliderInputScreen> {
+class _SliderInputScreenState extends ConsumerState<SliderInputScreen> {
   @override
   Widget build(BuildContext context) {
-    final bmi = widget.bmi;
+    final bmi = ref.watch(refBmi);
 
-    final bmiWithouNutll = bmi.bmi ?? BodyMassIndex.bmiMin;
     return Scaffold(
       appBar: AppBar(
         title: const Text('BMI Calculator(slider)'),
@@ -31,9 +30,7 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => TextInputScreen(
-                  bmi,
-                ),
+                builder: (context) => const TextInputScreen(),
               ),
             );
           },
@@ -42,7 +39,7 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
       body: LayoutBuilder(
         builder: ((context, constraints) {
           double maxW = constraints.maxWidth * 0.75;
-          double maxH = constraints.maxHeight * 0.4;
+          double maxH = constraints.maxHeight * 0.5;
           return Container(
             color: Colors.cyan,
             child: Center(
@@ -56,9 +53,9 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
                   children: <Widget>[
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       const Text(
-                        'Größe in Meter:',
+                        '  Größe :',
                         style: TextStyle(
-                          fontSize: 19.00,
+                          fontSize: 15.00,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -69,11 +66,14 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
                           divisions: 220,
                           label: '${bmi.height.toStringAsFixed(2)} m',
                           onChanged: (value) {
-                            setState(() {
-                              bmi.height = value;
-                            });
+                            var height = value;
+                            final provider = ref.read(refBmi.notifier);
+                            provider.state = BodyMassIndex(
+                              heigth: height,
+                              weight: provider.state.weight,
+                            );
                           },
-                          min: 01.10,
+                          min: 00.890,
                           max: 02.20,
                           value: bmi.height,
                         ),
@@ -83,9 +83,9 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'Gewicht in Kg:',
+                          'Gewicht:',
                           style: TextStyle(
-                            fontSize: 19.00,
+                            fontSize: 15.00,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -96,47 +96,21 @@ class _SliderInputScreenState extends State<SliderInputScreen> {
                             divisions: 180,
                             label: ' ${bmi.weight.round()} Kg',
                             onChanged: (value) {
-                              setState(
-                                () {
-                                  bmi.weight = value;
-                                },
+                              var weight = value;
+                              final provider = ref.read(refBmi.notifier);
+                              provider.state = BodyMassIndex(
+                                weight: weight,
+                                heigth: provider.state.height,
                               );
                             },
-                            min: 21.0,
+                            min: 19.0,
                             max: 180.0,
                             value: bmi.weight,
                           ),
                         ),
                       ],
                     ),
-                    Icon((bmiWithouNutll > 28 || bmiWithouNutll < 19)
-                        ? Icons.build_circle_sharp
-                        : Icons.check),
-                    Text(
-                      'Der BMI ist: ${bmiWithouNutll.toStringAsFixed(0)}',
-                      style: TextStyle(
-                        fontWeight: bmiWithouNutll > 28 || bmiWithouNutll < 19
-                            ? FontWeight.w700
-                            : FontWeight.w600,
-                        fontSize: bmiWithouNutll > 28 || bmiWithouNutll < 19
-                            ? 21.00
-                            : 21.00,
-                        color: bmiWithouNutll > 28 || bmiWithouNutll < 19
-                            ? Colors.red
-                            : Colors.black,
-                      ),
-                    ),
-                    Expanded(
-                      child: Slider(
-                        activeColor: bmiWithouNutll > 28 || bmiWithouNutll < 19
-                            ? Colors.red
-                            : Colors.black,
-                        value: bmiWithouNutll,
-                        onChanged: (value) {},
-                        min: BodyMassIndex.bmiMin,
-                        max: BodyMassIndex.bmiMax,
-                      ),
-                    ),
+                    const Expanded(child: BmiResult()),
                   ],
                 ),
               ),

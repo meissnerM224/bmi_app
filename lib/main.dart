@@ -1,23 +1,29 @@
 import 'package:bmi_app/models/bmi.dart';
 import 'package:bmi_app/view/screen2/textInput_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
-  final bmi = BodyMassIndex();
+final refBmi = StateProvider<BodyMassIndex>((ref) => BodyMassIndex());
+
+class MyApp extends ConsumerWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'BMI Calculator',
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      home: TextInputScreen(bmi),
+      home: const TextInputScreen(),
     );
   }
 }

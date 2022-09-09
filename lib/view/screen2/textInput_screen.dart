@@ -1,31 +1,32 @@
 // ignore_for_file: file_names
 
+import 'package:bmi_app/main.dart';
 import 'package:bmi_app/models/bmi.dart';
 import 'package:bmi_app/view/screen1/sliderInput_screen.dart';
+import 'package:bmi_app/widgets/bmi%20result.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TextInputScreen extends StatefulWidget {
-  const TextInputScreen(this.bmi, {Key? key}) : super(key: key);
+class TextInputScreen extends ConsumerStatefulWidget {
+  const TextInputScreen({Key? key}) : super(key: key);
 
-  final BodyMassIndex bmi;
   @override
-  State<TextInputScreen> createState() => _TextInputScreenState();
+  ConsumerState<TextInputScreen> createState() => _TextInputScreenState();
 }
 
-class _TextInputScreenState extends State<TextInputScreen> {
+class _TextInputScreenState extends ConsumerState<TextInputScreen> {
   final heightController = TextEditingController();
   final weightController = TextEditingController();
   var firstTime = true;
 
   @override
   Widget build(BuildContext context) {
-    final bmi = widget.bmi;
+    final bmi = ref.watch(refBmi);
     if (firstTime) {
       heightController.text = bmi.height.toStringAsFixed(2);
       weightController.text = bmi.weight.toStringAsFixed(0);
       firstTime = false;
     }
-    final bmiWithoutNull = bmi.bmi ?? BodyMassIndex.bmiMin;
     return Scaffold(
       appBar: AppBar(
         title: const Text('BMI Calculator (text)'),
@@ -35,7 +36,7 @@ class _TextInputScreenState extends State<TextInputScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => SliderInputScreen(bmi),
+                builder: (context) => const SliderInputScreen(),
               ),
             );
           },
@@ -47,7 +48,7 @@ class _TextInputScreenState extends State<TextInputScreen> {
           double maxH = constraints.maxHeight * 0.5;
 
           return Container(
-            color: Colors.cyan,
+            color: Colors.teal,
             child: Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
@@ -60,32 +61,46 @@ class _TextInputScreenState extends State<TextInputScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Größe in Meter :',
-                          style: TextStyle(
-                            fontSize: 19.00,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        Column(
+                          children: const [
+                            Text(
+                              'Größe in Meter: ',
+                              style: TextStyle(
+                                fontSize: 19.00,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text('min.0.90m - max.2.2m   '),
+                          ],
                         ),
                         Expanded(
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
                             controller: heightController,
                             style: const TextStyle(
                               fontSize: 19.00,
                               fontWeight: FontWeight.w500,
                             ),
                             onChanged: (value) {
-                              setState(
-                                () {
-                                  final heightDbl = double.tryParse(value);
-                                  if (heightDbl != null) {
-                                    bmi.height = heightDbl;
-                                  }
-                                },
-                              );
+                              var heightDbl = double.tryParse(value);
+                              if (heightDbl != null) {
+                                if (heightDbl > 2.20) {
+                                  heightDbl = 2.20;
+                                }
+                                if (heightDbl < 0.90) {
+                                  heightDbl = 0.9;
+                                }
+                                final provider = ref.read(refBmi.notifier);
+                                provider.state = BodyMassIndex(
+                                  heigth: heightDbl,
+                                  weight: provider.state.weight,
+                                );
+                              }
                             },
                             decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
+                              fillColor: Color.fromARGB(255, 77, 192, 167),
+                              filled: true,
+                              border: OutlineInputBorder(),
                               labelText: '',
                             ),
                           ),
@@ -95,66 +110,55 @@ class _TextInputScreenState extends State<TextInputScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Dein Gewicht(kg) :',
-                          style: TextStyle(
-                            fontSize: 19.00,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        Column(
+                          children: const [
+                            Text(
+                              ' Gewicht(kg) :',
+                              style: TextStyle(
+                                fontSize: 19.00,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              'min.19kg - max.180kg   ',
+                            ),
+                          ],
                         ),
                         Expanded(
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
                             controller: weightController,
                             style: const TextStyle(
                               fontSize: 19.00,
                               fontWeight: FontWeight.w600,
                             ),
                             onChanged: (value) {
-                              setState(() {
-                                final weightdbl = double.tryParse(value);
-                                if (weightdbl != null) {
-                                  bmi.weight = weightdbl;
+                              var weightdbl = double.tryParse(value);
+                              if (weightdbl != null) {
+                                if (weightdbl > 181) {
+                                  weightdbl = 180;
                                 }
-                              });
+                                if (weightdbl < 19) {
+                                  weightdbl = 19;
+                                }
+                                final provider = ref.read(refBmi.notifier);
+                                provider.state = BodyMassIndex(
+                                  weight: weightdbl,
+                                  heigth: provider.state.height,
+                                );
+                              }
                             },
                             decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
+                              fillColor: Color.fromARGB(255, 77, 192, 167),
+                              filled: true,
+                              border: OutlineInputBorder(),
                               labelText: '',
                             ),
                           ),
                         ),
                       ],
                     ),
-                    Icon((bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0)
-                        ? Icons.build_circle_sharp
-                        : Icons.check),
-                    Text(
-                      'Der BMI : ${bmiWithoutNull.toStringAsFixed(0)}',
-                      style: TextStyle(
-                        fontWeight:
-                            bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0
-                                ? FontWeight.w700
-                                : FontWeight.w600,
-                        fontSize: bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0
-                            ? 23.00
-                            : 21.00,
-                        color: bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0
-                            ? Colors.red
-                            : Colors.black,
-                      ),
-                    ),
-                    Expanded(
-                      child: Slider(
-                        activeColor:
-                            bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0
-                                ? Colors.red
-                                : Colors.black,
-                        value: bmiWithoutNull,
-                        onChanged: (value) {},
-                        min: BodyMassIndex.bmiMin,
-                        max: BodyMassIndex.bmiMax,
-                      ),
-                    ),
+                    const Expanded(child: BmiResult()),
                   ],
                 ),
               ),
