@@ -1,8 +1,9 @@
 // ignore_for_file: file_names
 
 import 'package:bmi_app/main.dart';
+import 'package:bmi_app/models/bmi.dart';
 import 'package:bmi_app/view/screen2/textInput_screen.dart';
-import 'package:bmi_app/widgets/bmi%20result.dart';
+import 'package:bmi_app/widgets/bmiResult.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -38,71 +39,82 @@ class _SliderInputScreenState extends ConsumerState<SliderInputScreen> {
       body: LayoutBuilder(
         builder: ((context, constraints) {
           double maxW = constraints.maxWidth * 0.75;
-          double maxH = constraints.maxHeight * 0.5;
           return Container(
+            height: double.infinity,
+            width: double.infinity,
             color: Colors.cyan,
             child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: maxW,
-                  maxHeight: maxH,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      const Text(
-                        '  Größe :',
-                        style: TextStyle(
-                          fontSize: 15.00,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Expanded(
-                        child: Slider(
-                          activeColor: Colors.green,
-                          inactiveColor: Colors.amber,
-                          divisions: 220,
-                          label: '${bmi.height.toStringAsFixed(2)} m',
-                          onChanged: (value) {
-                            final notifier = ref.read(refBmi.notifier);
-                            notifier.updateHeight(value);
-                          },
-                          min: 00.90,
-                          max: 02.20,
-                          value: bmi.height,
-                        ),
-                      ),
-                    ]),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Gewicht:',
-                          style: TextStyle(
-                            fontSize: 15.00,
-                            fontWeight: FontWeight.w500,
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: maxW,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Row(
+                        // Height
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            '  Größe :',
+                            style: TextStyle(
+                              fontSize: 17.00,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Slider(
-                            activeColor: Colors.red,
-                            inactiveColor: Colors.amber,
-                            divisions: 180,
-                            label: ' ${bmi.weight.round()} Kg',
-                            onChanged: (value) {
-                              final notifier = ref.read(refBmi.notifier);
-                              notifier.updateWeight(value);
-                            },
-                            min: 19.0,
-                            max: 180.0,
-                            value: bmi.weight,
+                          Expanded(
+                            child: Slider(
+                              activeColor: Colors.green,
+                              inactiveColor: Colors.amber,
+                              divisions: (BodyMassIndex.heightMax * 100 -
+                                      BodyMassIndex.heightMin * 100)
+                                  .toInt(),
+                              label: '${bmi.height.toStringAsFixed(2)} m',
+                              onChanged: (value) {
+                                final notifier = ref.read(refBmi.notifier);
+                                notifier.updateHeight(value);
+                              },
+                              min: BodyMassIndex.heightMin,
+                              max: BodyMassIndex.heightMax,
+                              value: bmi.height,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const Expanded(child: BmiResult()),
-                  ],
+                        ],
+                      ),
+                      Row(
+                        // Weight
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Gewicht:',
+                            style: TextStyle(
+                              fontSize: 17.00,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Expanded(
+                            child: Slider(
+                              activeColor: Colors.red,
+                              inactiveColor: Colors.amber,
+                              divisions: (BodyMassIndex.weightMax -
+                                      BodyMassIndex.weightMin) *
+                                  10,
+                              label: ' ${bmi.weight.toStringAsFixed(1)} Kg',
+                              onChanged: (value) {
+                                final notifier = ref.read(refBmi.notifier);
+                                notifier.updateWeight(value);
+                              },
+                              min: BodyMassIndex.weightMin.toDouble(),
+                              max: BodyMassIndex.weightMax.toDouble(),
+                              value: bmi.weight,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const BmiResult(),
+                    ],
+                  ),
                 ),
               ),
             ),

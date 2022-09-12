@@ -12,26 +12,22 @@ class BmiResult extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bmi = ref.watch(refBmi);
-    var bmiWithoutNull = bmi.bmi ?? BodyMassIndex.bmiMin;
-    return Expanded(
+    final bmi = ref.watch(refBmi).bmi;
+    return SizedBox(
+      height: 250,
       child: Column(children: [
         Expanded(
-          child: Icon((bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0)
-              ? Icons.back_hand
-              : Icons.check),
+          child:
+              Icon((bmi > 28.0 || bmi < 19.0) ? Icons.back_hand : Icons.check),
         ),
         Expanded(
           child: Text(
-            'Der BMI: ${bmiWithoutNull.toStringAsFixed(0)}',
+            'Der BMI: ${bmi.toStringAsFixed(0)}',
             style: TextStyle(
-              fontWeight: bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0
-                  ? FontWeight.w700
-                  : FontWeight.w600,
-              fontSize: bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0
-                  ? 23.00
-                  : 21.00,
-              color: bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0
+              fontWeight:
+                  bmi > 28.0 || bmi < 19.0 ? FontWeight.w700 : FontWeight.w600,
+              fontSize: bmi > 28.0 || bmi < 19.0 ? 23.00 : 21.00,
+              color: bmi > 28.0 || bmi < 19.0
                   ? Color.fromARGB(255, 210, 23, 10)
                   : Colors.black,
             ),
@@ -43,10 +39,10 @@ class BmiResult extends ConsumerWidget {
         ),
         Expanded(
           child: Slider(
-            activeColor: bmiWithoutNull > 28.0 || bmiWithoutNull < 19.0
+            activeColor: bmi > 28.0 || bmi < 19.0
                 ? Color.fromARGB(255, 210, 23, 10)
                 : Colors.black,
-            value: bmiWithoutNull,
+            value: bmi,
             onChanged: (value) {},
             min: BodyMassIndex.bmiMin,
             max: BodyMassIndex.bmiMax,

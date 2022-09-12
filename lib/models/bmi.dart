@@ -8,22 +8,26 @@ class BodyMassIndex {
 
   const BodyMassIndex({
     double weight = 19,
-    double heigth = 0.9,
-  })  : _weight = weight,
-        _height = heigth;
+    double height = 0.9,
+  })  : _weight = weight < 19
+            ? 19
+            : weight > 180
+                ? 180
+                : weight,
+        _height = height < 0.9
+            ? 0.9
+            : height > 2.2
+                ? 2.2
+                : height;
 
   BodyMassIndex copyWith({double? weight, double? height}) {
-    return BodyMassIndex(weight: weight ?? _weight, heigth: height ?? _height);
+    return BodyMassIndex(weight: weight ?? _weight, height: height ?? _height);
   }
 
   double get height => _height;
   double get weight => _weight;
 
-  double? get bmi {
-    if ((_height < 0.9 || _height > 2.20) ||
-        (_weight < 19.0 || _weight > 180.0)) {
-      return null;
-    }
+  double get bmi {
     double bmi = _weight / (_height * _height);
     if (bmi > bmiMax) {
       return bmiMax;
@@ -36,6 +40,10 @@ class BodyMassIndex {
 
   static const bmiMin = 4.0;
   static const bmiMax = 70.0;
+  static const heightMin = 0.9;
+  static const heightMax = 2.2;
+  static const weightMin = 19;
+  static const weightMax = 180;
 }
 
 class BodyMassIndexNotifier extends StateNotifier<BodyMassIndex> {
