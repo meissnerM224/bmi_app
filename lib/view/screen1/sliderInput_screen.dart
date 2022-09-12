@@ -1,7 +1,6 @@
 // ignore_for_file: file_names
 
 import 'package:bmi_app/main.dart';
-import 'package:bmi_app/models/bmi.dart';
 import 'package:bmi_app/view/screen2/textInput_screen.dart';
 import 'package:bmi_app/widgets/bmi%20result.dart';
 import 'package:flutter/material.dart';
@@ -66,14 +65,10 @@ class _SliderInputScreenState extends ConsumerState<SliderInputScreen> {
                           divisions: 220,
                           label: '${bmi.height.toStringAsFixed(2)} m',
                           onChanged: (value) {
-                            var height = value;
-                            final provider = ref.read(refBmi.notifier);
-                            provider.state = BodyMassIndex(
-                              heigth: height,
-                              weight: provider.state.weight,
-                            );
+                            final notifier = ref.read(refBmi.notifier);
+                            notifier.updateHeight(value);
                           },
-                          min: 00.890,
+                          min: 00.90,
                           max: 02.20,
                           value: bmi.height,
                         ),
@@ -96,12 +91,8 @@ class _SliderInputScreenState extends ConsumerState<SliderInputScreen> {
                             divisions: 180,
                             label: ' ${bmi.weight.round()} Kg',
                             onChanged: (value) {
-                              var weight = value;
-                              final provider = ref.read(refBmi.notifier);
-                              provider.state = BodyMassIndex(
-                                weight: weight,
-                                heigth: provider.state.height,
-                              );
+                              final notifier = ref.read(refBmi.notifier);
+                              notifier.updateWeight(value);
                             },
                             min: 19.0,
                             max: 180.0,

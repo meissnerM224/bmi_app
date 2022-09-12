@@ -11,7 +11,8 @@ void main() {
   );
 }
 
-final refBmi = StateProvider<BodyMassIndex>((ref) => BodyMassIndex());
+final refBmi = StateNotifierProvider<BodyMassIndexNotifier, BodyMassIndex>(
+    (ref) => BodyMassIndexNotifier());
 
 class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);

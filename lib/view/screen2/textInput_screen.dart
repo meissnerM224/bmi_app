@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:bmi_app/main.dart';
-import 'package:bmi_app/models/bmi.dart';
+// import 'package:bmi_app/models/bmi.dart';
 import 'package:bmi_app/view/screen1/sliderInput_screen.dart';
 import 'package:bmi_app/widgets/bmi%20result.dart';
 import 'package:flutter/material.dart';
@@ -90,11 +90,8 @@ class _TextInputScreenState extends ConsumerState<TextInputScreen> {
                                 if (heightDbl <= 0.90) {
                                   heightDbl = 0.9;
                                 }
-                                final provider = ref.read(refBmi.notifier);
-                                provider.state = BodyMassIndex(
-                                  heigth: heightDbl,
-                                  weight: provider.state.weight,
-                                );
+                                final notifier = ref.read(refBmi.notifier);
+                                notifier.updateHeight(heightDbl);
                               }
                             },
                             decoration: const InputDecoration(
@@ -141,11 +138,8 @@ class _TextInputScreenState extends ConsumerState<TextInputScreen> {
                                 if (weightdbl < 19) {
                                   weightdbl = 19;
                                 }
-                                final provider = ref.read(refBmi.notifier);
-                                provider.state = BodyMassIndex(
-                                  weight: weightdbl,
-                                  heigth: provider.state.height,
-                                );
+                                final notifier = ref.read(refBmi.notifier);
+                                notifier.updateWeight(weightdbl);
                               }
                             },
                             decoration: const InputDecoration(
