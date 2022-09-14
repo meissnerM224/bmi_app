@@ -37,7 +37,6 @@ class _TextInputScreenState extends ConsumerState<TextInputScreen> {
       body: LayoutBuilder(
         builder: ((context, constraints) {
           double maxW = constraints.maxWidth * 0.75;
-
           return Container(
             width: double.infinity,
             height: double.infinity,

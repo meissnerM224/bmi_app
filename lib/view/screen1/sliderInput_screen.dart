@@ -1,5 +1,3 @@
-// ignore_for_file: file_names
-
 import 'package:bmi_app/main.dart';
 import 'package:bmi_app/models/bmi.dart';
 import 'package:bmi_app/view/screen2/textInput_screen.dart';

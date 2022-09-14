@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_getters_setters
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BodyMassIndex {
